@@ -1,0 +1,46 @@
+.open users.db
+---
+ CREATE TABLE users(
+   ...> id integer PRIMARY KEY AUTOINCREMENT,
+   ...> login text NOT NULL UNIQUE,
+   ...> password text NOT NULL UNIQUE,
+   ...> license_number text
+   ...> );
+---
+.schema users
+CREATE TABLE users(
+id integer PRIMARY KEY AUTOINCREMENT,
+login text NOT NULL UNIQUE,
+password text NOT NULL UNIQUE,
+license_number text
+);
+---
+CREATE TABLE orders(
+   ...>         id_user integer NOT NULL UNIQUE,
+   ...>         id_good integer NOT NULL UNIQUE,
+   ...>         FOREIGN KEY (id_user) REFERENCES users(id)
+   ...> );
+---
+ CREATE TABLE goods(
+   ...>         is_good integer PRIMARY KEY AUTOINCREMENT,
+   ...>         good_name text NOT NULL UNIQUE,
+   ...>         price integer,
+   ...>         in_stock integer
+   ...> );
+---
+ CREATE TABLE sale_places(
+   ...>         place_id integer PRIMARY KEY AUTOINCREMENT,
+   ...>         address text NOT NULL,
+   ...>         metro text NOT NULL
+   ...> );
+---
+sqlite> CREATE TABLE goods_to_places(
+   ...>         id_of_place integer NOT NULL UNIQUE,
+   ...>         good_id integer NOT NULL UNIQUE,
+   ...>         FOREIGN KEY (id_of_place) REFERENCES sale_places(place_id),
+   ...>         FOREIGN KEY (good_id) REFERENCES goods(is_good)
+   ...> );
+---
+sqlite> ALTER TABLE goods RENAME COLUMN is_good TO id_good
+   ...>
+   ...> ;
