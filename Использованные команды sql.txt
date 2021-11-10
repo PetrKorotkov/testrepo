@@ -38,9 +38,27 @@ sqlite> CREATE TABLE goods_to_places(
    ...>         id_of_place integer NOT NULL UNIQUE,
    ...>         good_id integer NOT NULL UNIQUE,
    ...>         FOREIGN KEY (id_of_place) REFERENCES sale_places(place_id),
-   ...>         FOREIGN KEY (good_id) REFERENCES goods(is_good)
+   ...>         FOREIGN KEY (good_id) REFERENCES goods(id_good)
    ...> );
 ---
 sqlite> ALTER TABLE goods RENAME COLUMN is_good TO id_good
    ...>
    ...> ;
+---
+UPDATE users 
+	SET registration_date = 
+	SUBSTR(registration_date, 7, 4) ||
+	"-" ||
+	SUBSTR(registration_date, 4, 2) ||
+	"-" ||
+	SUBSTR(registration_date, 1, 2);
+---
+SELECT id FROM users WHERE registration_date = (SELECT MAX(registration_date) FROM users);
+---
+SELECT DISTINCT SUBSTR(birth_date, 1, 4) from users;
+---
+SELECT SUM(in_stock) AS "total_items" FROM goods;
+---
+SELECT id FROM users WHERE (SELECT Cast(julianday("now") - julianday(registration_date) AS INTEGER)) <= 61; # вывести тех, кто зарегистрировался не позже двух месяцев назад
+---
+SELECT AVG(id) FROM users WHERE (SELECT Cast(julianday("now") - julianday(registration_date) AS INTEGER)) <= 61;
