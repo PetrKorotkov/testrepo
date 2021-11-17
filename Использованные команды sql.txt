@@ -62,3 +62,32 @@ SELECT SUM(in_stock) AS "total_items" FROM goods;
 SELECT id FROM users WHERE (SELECT Cast(julianday("now") - julianday(registration_date) AS INTEGER)) <= 61; # вывести тех, кто зарегистрировался не позже двух месяцев назад
 ---
 SELECT AVG(id) FROM users WHERE (SELECT Cast(julianday("now") - julianday(registration_date) AS INTEGER)) <= 61;
+---
+/*вывести покупки клиента и узнать, сколько он заплатил*/
+SELECT
+	(SELECT login FROM users WHERE id = id_user) AS client_login, 
+	(SELECT good_name FROM goods WHERE id_good = ordered_good_id) AS good_name,
+	(SELECT price FROM goods WHERE id_good = ordered_good_id) AS price
+FROM orders;
+---
+/*Найти сколько всего в точке продажи товаров*/
+SELECT
+	(SELECT SUM(number_of_goods) FROM goods_to_places WHERE id_of_place = place_id) AS total_goods
+FROM sale_places;
+---
+/*Соотнести, какая компания какой товар доставляет*/
+SELECT
+	(SELECT good_name FROM goods WHERE id_good = 
+		(SELECT good_id FROM goods_to_places WHERE id_of_place = point_of_delivery)) AS goods,
+	id_of_deliver
+FROM delivers;
+---
+/*вывести пользователей, родившихся после 1 января 1980, и их покупки*/
+SELECT
+	login,
+	(SELECT ordered_good_id FROM orders WHERE id_user = id) AS us_orders
+FROM users
+WHERE birth_date >= '1980-01-01';
+---
+/*Вывести пользователей, живущих в США, у которых больше 2 предупреждений*/
+SELECT login, license_number, warnings FROM users WHERE warnings > 2 and country = 'USA';
