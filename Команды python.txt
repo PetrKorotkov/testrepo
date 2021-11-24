@@ -1,0 +1,59 @@
+/*Найти сколько всего в точке продажи товаров*/
+import sqlite3
+
+conn = sqlite3.connect('C:/Users/SAMSUNG/Desktop/SQLITE/users.db')
+cursor = conn.cursor()
+cursor.execute(
+    'SELECT (SELECT SUM(number_of_goods)' +
+    ' FROM goods_to_places WHERE id_of_place = place_id)' +
+    ' AS total_goods FROM sale_places;'
+    )
+print(cursor.fetchall())
+
+conn.close()
+-------
+/*вывести покупки клиента и узнать, сколько он заплатил*/
+import sqlite3
+
+conn = sqlite3.connect('C:/Users/SAMSUNG/Desktop/SQLITE/users.db')
+cursor = conn.cursor()
+cursor.execute(
+    'SELECT (SELECT login FROM users WHERE id = id_user)' +
+    ' AS client_login, (SELECT good_name FROM goods WHERE id_good = ordered_good_id)' +
+    ' AS good_name, (SELECT price FROM goods WHERE id_good = ordered_good_id) AS price FROM orders;'
+    )
+print(cursor.fetchall())
+
+conn.close()
+-------
+/*Соотнести, какая компания какой товар доставляет*/
+~
+cursor.execute(
+    'SELECT (SELECT good_name FROM goods WHERE id_good' +
+    ' = (SELECT good_id FROM goods_to_places WHERE id_of_place = point_of_delivery))' +
+    ' AS goods, id_of_deliver FROM delivers;'
+    )
+~
+-------
+/*вывести пользователей, родившихся после 1 января 1980, и их покупки*/
+~
+cursor.execute(
+    'SELECT login, (SELECT ordered_good_id FROM orders WHERE id_user = id)' +
+    ' AS us_orders FROM users WHERE birth_date >= 1980-01-01;'
+    )
+~
+-------
+/*Вывести пользователей, живущих в США, у которых больше 2 предупреждений*/
+~
+cursor.execute("SELECT login, license_number, warnings FROM users WHERE warnings > 2 and country = 'USA';")
+~
+-------
+Отдельная функция для инициализации базы данных
+
+import sqlite3
+
+def initialisation(path):
+    connection = sqlite3.connect(path)
+    return connection
+
+conn = initialisation('C:/Users/SAMSUNG/Desktop/SQLITE/users.db')
